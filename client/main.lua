@@ -9,15 +9,21 @@ local lol = nil
 function CreatePedd()
     ESX.TriggerServerCallback("PetL", function(modell)
     local pedpet = GetHashKey(modell)
-local dogout = 
-Citizen.CreateThread(function()
+    local dogout = false
+    Citizen.CreateThread(function()
     while true do
-     Citizen.Wait(5000)
+     Citizen.Wait(1000)
      --print("alive")
-     if IsPedDeadOrDying(lol, 1) or IsPedDeadOrDying(idd, 1) and isdogout then
-        --print("ded")
+     if IsPedDeadOrDying(lol, 1) and dogout then
+        print("ded")
+        print(dogout)
          TriggerServerEvent("PetL:DeletePet", source)
          idd = nil
+     elseif IsPedDeadOrDying(idd, 1) and dogout then
+        print("ded")
+        print(dogout)
+         TriggerServerEvent("PetL:DeletePet", source)
+         idd = ni
          break
      end
  end
@@ -36,14 +42,16 @@ Citizen.CreateThread(function()
     end
    -------print(lolr)
     idd2 = NetworkGetNetworkIdFromEntity(lol)
-idd = NetworkGetEntityFromNetworkId(idd2)
+    idd = NetworkGetEntityFromNetworkId(idd2)
 ----print(idd)
-AddEventHandler('onResourceStop', function()
-    DeletePed(idd)
-    end)
+
     return idd
 end)
 end
+
+AddEventHandler('onResourceStop', function()
+    DeletePed(idd)
+    end)
 
 
 local ECM = exports["ContextMenu"]
@@ -64,7 +72,7 @@ end
 
 ESX.TriggerServerCallback('dogscript:getpet', function(pett)
     
-if idd == nil and pett  then
+if idd == nil and pett and not dogout  then
     ESX.TriggerServerCallback("PetL2", function(nickname)
 local rufen = ECM:AddItem(0, Translation[Config.Locale]['CallPet'] .. " (" .. nickname .. ")", function()
     CreatePedd()
@@ -125,7 +133,8 @@ end
     
 if hitEntity == idd then
     local itemistes = ECM:AddItem(0, Translation[Config.Locale]['GoHome'], function()
-dogout = false
+    dogout = false
+    idd = nil
         
         local coords = worldPosition
             SetPedNeverLeavesGroup(hitEntity, false)
@@ -134,8 +143,10 @@ dogout = false
             SetBlockingOfNonTemporaryEvents(hitEntity, true)
             SetPedFleeAttributes(hitEntity, 0, 0)
             TaskGoToCoordAnyMeans(hitEntity, coords.x + 40, coords.y, coords.z, 5.0, 0, 0, 786603, 0xbf800000)
-            Citizen.Wait(5000)
+            Citizen.Wait(3000)
             DeletePed(hitEntity)
+            dogout = false
+            idd = nil
     end)
 
 local playerPed = PlayerPedId()
